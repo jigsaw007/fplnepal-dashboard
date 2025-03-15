@@ -1,15 +1,12 @@
 [build]
-  base = "fplnepal-dashboard"  # ✅ Ensures the build runs inside fplnepal-dashboard
+  base = "fplnepal-dashboard"
   command = "npm install && npm run build"
   publish = "build"
 
-
 [dev]
-  command = "npm --prefix fplnepal-dashboard run start"  # Run start script in frontend directory
-  targetPort = 3000                                      # Default React port
+  command = "npm --prefix fplnepal-dashboard run start"
+  targetPort = 3000
 
 [functions]
   directory = "backend/functions"
   node_bundler = "esbuild"
-
-

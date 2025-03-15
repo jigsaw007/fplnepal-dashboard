@@ -1,14 +1,17 @@
 const express = require("express");
 const axios = require("axios");
 const cors = require("cors");
-const serverless = require("serverless-http"); // Added for Netlify Functions..
+const serverless = require("serverless-http"); // Added for Netlify Functions
 require("dotenv").config();
 
 const app = express();
 // const PORT = process.env.PORT || 5000;
 
 const corsOptions = {
-  origin: ["https://fplnepaldashboard.netlify.app"], // ✅ Allow only your frontend domain
+    origin: [
+        "https://fplnepaldashboard.netlify.app",
+        "http://localhost:3000", // Add this for local dev
+      ],
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   allowedHeaders: ["Content-Type", "Authorization"],
 };
@@ -606,7 +609,9 @@ app.get("/player/:id", async (req, res) => {
 });
 
 // ✅ Export the app as a Netlify Function handler instead of starting a server
-module.exports.handler = serverless(app);
+module.exports.handler = serverless(app, {
+  basePath: "/api", // Strip "/api" from the path
+});
 
 // Comment out the original app.listen() to avoid running as a traditional server
 // app.listen(PORT, () => {
