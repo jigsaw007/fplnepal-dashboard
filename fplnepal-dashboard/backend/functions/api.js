@@ -1,7 +1,7 @@
 const express = require("express");
 const axios = require("axios");
 const cors = require("cors");
-const serverless = require("serverless-http"); // Added for Netlify Functions
+const serverless = require("serverless-http"); // Added for Netlify Functions..
 require("dotenv").config();
 
 const app = express();
