@@ -5,7 +5,7 @@ const serverless = require("serverless-http"); // Added for Netlify Functions..
 require("dotenv").config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+// const PORT = process.env.PORT || 5000;
 
 const corsOptions = {
   origin: ["https://fplnepaldashboard.netlify.app"], // ✅ Allow only your frontend domain
