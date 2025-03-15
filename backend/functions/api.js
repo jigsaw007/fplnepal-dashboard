@@ -6,7 +6,11 @@ require("dotenv").config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-
+const corsOptions = {
+  origin: "*", // 🔥 Allows all origins (use specific domains for security)
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
 app.use(cors());
 
 const FPL_BASE_URL = "https://fantasy.premierleague.com/api";
