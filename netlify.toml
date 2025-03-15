@@ -1,7 +1,8 @@
 [build]
-  command = "npm install && npm run build"  # Ensure dependencies are installed
-  publish = "fplnepal-dashboard/build" # Frontend build output directory
-  functions = "backend/functions"      # Backend functions directory
+  base = "fplnepal-dashboard"  # ✅ Ensures the build runs inside fplnepal-dashboard
+  command = "npm install && npm run build"
+  publish = "build"
+
 
 [dev]
   command = "npm --prefix fplnepal-dashboard run start"  # Run start script in frontend directory
