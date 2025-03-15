@@ -1,12 +1,13 @@
 // Determine the BASE_URL based on the environment
 const isLocal = process.env.NODE_ENV === "development";
 const BASE_URL = isLocal
-  ? "http://localhost:8888/.netlify/functions/api" // Local dev with netlify dev
-  : "https://fplnepaldashboard.netlify.app/.netlify/functions/api"; // Production
+  ? "http://localhost:8888/.netlify/functions"
+  : "https://fplnepaldashboard.netlify.app/.netlify/functions";
+
 
 export const fetchFPLData = async () => {
   try {
-    const response = await fetch(`${BASE_URL}/fpl-data`);
+    const response = await fetch(`${BASE_URL}/api/fpl-data`);
     if (!response.ok) throw new Error("Failed to fetch FPL data");
     return await response.json();
   } catch (error) {
