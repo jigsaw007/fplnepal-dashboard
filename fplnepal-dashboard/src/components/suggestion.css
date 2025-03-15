@@ -1,0 +1,13 @@
+.suggestion-container {
+    background: #f4f4f4;
+    padding: 15px;
+    border-radius: 10px;
+  }
+  
+  .title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+  

@@ -1,0 +1,6 @@
+{
+    "name": "fpl-dashboard-root",
+    "version": "1.0.0",
+    "private": true,
+    "description": "Root package for FPL Dashboard project"
+  }

@@ -1,0 +1,13 @@
+[build]
+  base = "fplnepal-dashboard"          # Frontend directory
+  command = "npm run build"            # Build command for React app
+  publish = "fplnepal-dashboard/build" # Frontend build output directory
+  functions = "backend/functions"      # Backend functions directory
+
+[dev]
+  command = "npm --prefix fplnepal-dashboard run start"  # Run start script in frontend directory
+  targetPort = 3000                                      # Default React port
+
+[functions]
+  directory = "backend/functions"
+  node_bundler = "esbuild"

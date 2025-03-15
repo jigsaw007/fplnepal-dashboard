@@ -1,0 +1,98 @@
+.dreamteam-container {
+  width: 100%; /* Allow full width */
+  padding: 8px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+  min-height: 300px; /* ✅ Maintain height to avoid shift */
+}
+
+/* Title */
+.title {
+  font-size: 13px !important;  /* ✅ Smaller title */
+  font-weight: bold !important;
+  text-align: center !important;
+  margin-bottom: 6px !important;
+}
+
+.gameweek-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  margin-bottom: 8px;
+  position: relative; /* ✅ Keep buttons in place */
+}
+
+.gw-btn {
+  background: #4b0082;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  font-size: 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  min-width: 50px; /* ✅ Prevent shrinking */
+}
+.gw-btn:disabled {
+  background: gray;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+.gameweek-label {
+  background: #ddd;
+  padding: 4px 8px; /* ✅ Smaller padding */
+  border-radius: 4px;
+  font-weight: bold;
+  font-size: 12px;
+}
+
+.dreamteam-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+  min-height: 200px; /* ✅ Prevent layout shift */
+}
+
+.dreamteam-table th,
+.dreamteam-table td {
+  padding: 2px;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+  min-width: 50px; /* ✅ Prevent column resizing */
+  max-width: 120px;
+}
+
+.dreamteam-table th {
+  background: #f4f4f4;
+  font-weight: bold;
+  font-size: 11px;
+}
+
+/* Images */
+.team-kit {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+/* Spinner */
+.spinner-container {
+  text-align: center;
+  padding: 10px;
+  min-height: 100px; /* ✅ Ensure consistent height */
+}
+
+.spinner {
+  width: 22px;
+  height: 22px;
+  border: 2px solid rgba(0, 0, 255, 0.3);
+  border-top-color: blue;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

@@ -1,0 +1,20 @@
+{
+	"geolocation": {
+		"data": {
+			"city": "Sasame",
+			"country": {
+				"code": "JP",
+				"name": "Japan"
+			},
+			"subdivision": {
+				"code": "11",
+				"name": "Saitama"
+			},
+			"timezone": "Asia/Tokyo",
+			"latitude": 35.8072,
+			"longitude": 139.6542,
+			"postalCode": "335-0031"
+		},
+		"timestamp": 1741946554519
+	}
+}
