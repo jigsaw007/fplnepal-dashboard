@@ -8,7 +8,7 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 const corsOptions = {
-  origin: ["https://fplnepaldashboard.netlify.app"], // ✅ Allow only your frontend domain
+  origin: ["https://fplnepaldashboard.netlify.app"], // ✅ Allow only your frontend domain...
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   allowedHeaders: ["Content-Type", "Authorization"],
 };
