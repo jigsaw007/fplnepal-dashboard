@@ -1,6 +1,5 @@
 [build]
-  base = "fplnepal-dashboard"          # Frontend directory
-  command = "npm run build"            # Build command for React app
+  command = "npm install && npm run build"  # Ensure dependencies are installed
   publish = "fplnepal-dashboard/build" # Frontend build output directory
   functions = "backend/functions"      # Backend functions directory
 
