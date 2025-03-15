@@ -10,7 +10,8 @@ const app = express();
 const corsOptions = {
     origin: [
         "https://fplnepaldashboard.netlify.app",
-        "http://localhost:3000", // Add this for local dev
+        "https://webapp.fplnepal.com",
+        "http://localhost:3000", // local dev
       ],
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   allowedHeaders: ["Content-Type", "Authorization"],

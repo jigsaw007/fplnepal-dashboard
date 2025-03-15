@@ -2,7 +2,8 @@
 const isLocal = process.env.NODE_ENV === "development";
 const BASE_URL = isLocal
   ? "http://localhost:8888/.netlify/functions/api" // ✅ Local development
-  : "https://fplnepaldashboard.netlify.app/.netlify/functions/api"; // ✅ Netlify production
+  //: "https://fplnepaldashboard.netlify.app/.netlify/functions/api";  ✅ Netlify production
+  : "https://webapp.fplnepal.com/.netlify/functions/api";
 
 export const fetchFPLData = async () => {
   try {
