@@ -9,5 +9,5 @@
   targetPort = 3000                                      # Default React port
 
 [functions]
-  directory = "backend/functions"
+  directory = "fplnepal-dashboard/functions"
   node_bundler = "esbuild"
