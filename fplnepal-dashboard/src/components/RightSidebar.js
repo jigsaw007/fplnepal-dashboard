@@ -1,12 +1,14 @@
 import GameweekResults from "./GameweekResults";
 import DreamTeam from "./DreamTeam";
+import Live from "./Live";
 
 const RightSidebar = () => {
   return (
     <aside className="w-1/4 bg-gray-100 p-4 shadow-md">
       
       {/* Gameweek Results Component */}
-      <GameweekResults />
+      {/* <GameweekResults /> */}
+      <Live />
       
       {/* Future Components Can Be Added Here */}
       <DreamTeam />

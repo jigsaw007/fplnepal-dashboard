@@ -159,13 +159,50 @@ export const fetchUserHistory = async (teamId) => {
 };
 
 // Fetch Player Details
-export const fetchPlayerDetails = async (playerId) => {
+export const fetchPlayerDetails = async () => {
   try {
-    const response = await fetch(`${BASE_URL}/player/${playerId}`);
-    if (!response.ok) throw new Error(`Failed to fetch player details: ${response.statusText}`);
+    console.log("Fetching player details...");
+    const response = await fetch("https://fantasy.premierleague.com/api/bootstrap-static/");
+    
+    if (!response.ok) {
+      throw new Error("Failed to fetch player details");
+    }
+
+    const data = await response.json();
+    console.log("Fetched Player Details Response:", data);
+
+    return data.elements || [];
+  } catch (error) {
+    console.error("Error fetching player details:", error);
+    return [];
+  }
+};
+
+// ✅ Fetch Live Fixtures from Backend
+export const fetchLiveFixtures = async () => {
+  try {
+    const response = await fetch(`${BASE_URL}/live-fixtures`);
+    if (!response.ok) throw new Error("Failed to fetch live fixtures");
     return await response.json();
   } catch (error) {
-    console.error("Error fetching player details:", error.message);
+    console.error("Error fetching live fixtures:", error);
     return null;
   }
 };
+
+//Live Score Details
+export const fetchLiveMatchDetails = async (gameweek) => {
+  try {
+    console.log(`Fetching live match details for GW ${gameweek}`);
+    const response = await fetch(`https://fantasy.premierleague.com/api/event/${gameweek}/live/`);
+    if (!response.ok) throw new Error("Failed to fetch live match details");
+    
+    const data = await response.json();
+    console.log("Live Match Details API Response:", data); // Debugging log
+    return data;
+  } catch (error) {
+    console.error("Error fetching live match details:", error);
+    return null;
+  }
+};
+

@@ -2,5 +2,8 @@
     "name": "fpl-dashboard-root",
     "version": "1.0.0",
     "private": true,
-    "description": "Root package for FPL Dashboard project"
-  }
+    "description": "Root package for FPL Dashboard project",
+    "dependencies": {
+        "react-chartjs-2": "^5.3.0"
+    }
+}

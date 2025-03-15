@@ -608,6 +608,31 @@ app.get("/player/:id", async (req, res) => {
   }
 });
 
+
+
+// ✅ New API Route: Fetch Live Fixtures for Latest Gameweek
+app.get("/live-fixtures", async (req, res) => {
+  try {
+    // Fetch bootstrap data to get latest gameweek
+    const bootstrapRes = await axios.get(`${FPL_BASE_URL}/bootstrap-static/`);
+    const today = new Date();
+    const latestGameweek = bootstrapRes.data.events
+      .filter(event => new Date(event.deadline_time) <= today)
+      .reduce((prev, curr) => (curr.id > prev.id ? curr : prev), { id: 1 });
+
+    // Fetch Fixtures for the latest gameweek
+    const fixturesRes = await axios.get(`${FPL_BASE_URL}/fixtures/?event=${latestGameweek.id}`);
+    
+    res.json({
+      gameweek: latestGameweek.id,
+      fixtures: fixturesRes.data
+    });
+  } catch (error) {
+    console.error("Error fetching live fixtures:", error.message);
+    res.status(500).json({ error: "Failed to fetch live fixtures" });
+  }
+});
+
 // ✅ Export the app as a Netlify Function handler instead of starting a server
 module.exports.handler = serverless(app, {
   basePath: "/api", // Strip "/api" from the path

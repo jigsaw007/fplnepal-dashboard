@@ -14,6 +14,9 @@ import Footer from "./components/Footer";
 import TieAnalyzer from "./components/TieAnalyzer";
 import H2HTopScorer from "./components/h2htopscorer";
 import History from "./components/History";
+import Live from "./components/Live";
+
+
 
 const App = () => {
   return (
@@ -39,6 +42,9 @@ const App = () => {
                 <Route path="/tieanalyzer" element={<TieAnalyzer />} />
                 <Route path="/h2htopscorer" element={<H2HTopScorer />} />
                 <Route path="/history" element={<History />} />
+                <Route path="/live" element={<Live />} />
+
+
               </Routes>
             </div>
             {/* Global Right Sidebar - Now It Appears on All Pages */}
