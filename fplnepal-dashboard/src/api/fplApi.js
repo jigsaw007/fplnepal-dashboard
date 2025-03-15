@@ -1,13 +1,12 @@
 // Determine the BASE_URL based on the environment
 const isLocal = process.env.NODE_ENV === "development";
 const BASE_URL = isLocal
-  ? "http://localhost:8888/.netlify/functions"
-  : "https://fplnepaldashboard.netlify.app/.netlify/functions";
-
+  ? "http://localhost:8888/.netlify/functions/api" // ✅ Local development
+  : "https://fplnepaldashboard.netlify.app/.netlify/functions/api"; // ✅ Netlify production
 
 export const fetchFPLData = async () => {
   try {
-    const response = await fetch(`${BASE_URL}/api/fpl-data`);
+    const response = await fetch(`${BASE_URL}/fpl-data`);
     if (!response.ok) throw new Error("Failed to fetch FPL data");
     return await response.json();
   } catch (error) {
@@ -43,7 +42,7 @@ export const fetchTeamsData = async () => {
 // Transfer Data
 export const fetchTransfersData = async () => {
   try {
-    const response = await fetch(`${BASE_URL}/bootstrap-static`); // Fetch via backend
+    const response = await fetch(`${BASE_URL}/bootstrap-static`);
     if (!response.ok) throw new Error("Failed to fetch transfers data");
 
     const data = await response.json();
@@ -64,7 +63,7 @@ export const fetchTransfersData = async () => {
 // Injury News
 export const fetchInjuryNews = async () => {
   try {
-    const response = await fetch(`${BASE_URL}/injuries`); // Use BASE_URL
+    const response = await fetch(`${BASE_URL}/injuries`);
     if (!response.ok) throw new Error("Failed to fetch injuries");
     return await response.json();
   } catch (error) {
