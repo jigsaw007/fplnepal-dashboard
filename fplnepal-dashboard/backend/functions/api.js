@@ -8,7 +8,7 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 const corsOptions = {
-  origin: ["https://stately-druid-fef8e8.netlify.app"], // ✅ Allow only your frontend domain
+  origin: ["https://fplnepaldashboard.netlify.app"], // ✅ Allow only your frontend domain
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   allowedHeaders: ["Content-Type", "Authorization"],
 };
@@ -23,7 +23,7 @@ app.use((req, res, next) => {
 });
 
 // ✅ Fetch General FPL Data (Bootstrap)
-app.get("/api/fpl-data", async (req, res) => {
+app.get("/fpl-data", async (req, res) => {
   try {
     const response = await axios.get(`${FPL_BASE_URL}/bootstrap-static/`, {
       headers: { "User-Agent": "Mozilla/5.0" },
@@ -36,7 +36,7 @@ app.get("/api/fpl-data", async (req, res) => {
 });
 
 // ✅ Fetch Fixtures for a Specific Gameweek
-app.get("/api/fixtures", async (req, res) => {
+app.get("/fixtures", async (req, res) => {
   const { event } = req.query;
   if (!event) return res.status(400).json({ error: "Gameweek (event) is required" });
 
@@ -52,7 +52,7 @@ app.get("/api/fixtures", async (req, res) => {
 });
 
 // ✅ Fetch Teams Data (with Badges)
-app.get("/api/teams", async (req, res) => {
+app.get("/teams", async (req, res) => {
   try {
     const response = await axios.get(`${FPL_BASE_URL}/bootstrap-static/`, {
       headers: { "User-Agent": "Mozilla/5.0" },
@@ -72,7 +72,7 @@ app.get("/api/teams", async (req, res) => {
 });
 
 // ✅ Fetch Bootstrap Data (Players & Transfers)
-app.get("/api/bootstrap-static", async (req, res) => {
+app.get("/bootstrap-static", async (req, res) => {
   try {
     const response = await axios.get(`${FPL_BASE_URL}/bootstrap-static/`, {
       headers: { "User-Agent": "Mozilla/5.0" },
@@ -85,7 +85,7 @@ app.get("/api/bootstrap-static", async (req, res) => {
 });
 
 // ✅ Fetch Injury News (Players with News)
-app.get("/api/injuries", async (req, res) => {
+app.get("/injuries", async (req, res) => {
   try {
     const response = await axios.get(`${FPL_BASE_URL}/bootstrap-static/`, {
       headers: { "User-Agent": "Mozilla/5.0" },
@@ -100,7 +100,7 @@ app.get("/api/injuries", async (req, res) => {
 });
 
 // ✅ Fetch Classic League Standings with Gameweek Scores
-app.get("/api/classic-league/:leagueId/:gameweek", async (req, res) => {
+app.get("/classic-league/:leagueId/:gameweek", async (req, res) => {
   const { leagueId, gameweek } = req.params;
   let allStandings = [];
   let page = 1;
@@ -167,7 +167,7 @@ app.get("/api/classic-league/:leagueId/:gameweek", async (req, res) => {
   }
 });
 
-app.get("/api/manager-history/:managerId", async (req, res) => {
+app.get("/manager-history/:managerId", async (req, res) => {
   const { managerId } = req.params;
   try {
     const response = await axios.get(`${FPL_BASE_URL}/entry/${managerId}/history/`);
@@ -178,7 +178,7 @@ app.get("/api/manager-history/:managerId", async (req, res) => {
   }
 });
 
-app.get("/api/h2h-league-all", async (req, res) => {
+app.get("/h2h-league-all", async (req, res) => {
   const HEAD_TO_HEAD_LEAGUES = {
     "Div A": 446714,
     "Div B": 446717,
@@ -233,7 +233,7 @@ app.get("/api/h2h-league-all", async (req, res) => {
 });
 
 // ✅ Fetch Dream Team for a Specific Gameweek
-app.get("/api/dream-team/:gameweek", async (req, res) => {
+app.get("/dream-team/:gameweek", async (req, res) => {
   const { gameweek } = req.params;
 
   try {
@@ -249,7 +249,7 @@ app.get("/api/dream-team/:gameweek", async (req, res) => {
 });
 
 // ✅ Tie Analyzer API Endpoint
-app.get("/api/tieanalyze", async (req, res) => {
+app.get("/tieanalyze", async (req, res) => {
   const { team_id1, team_id2, gameweek } = req.query;
 
   if (!team_id1 || !team_id2 || !gameweek) {
@@ -393,7 +393,7 @@ const HEAD_TO_HEAD_LEAGUES = {
 };
 
 // ✅ Fetch Highest Scorer for Each H2H League + Team Name
-app.get("/api/h2h-topscorer/:gameweek", async (req, res) => {
+app.get("/h2h-topscorer/:gameweek", async (req, res) => {
   const { gameweek } = req.params;
   let leagueTopScorers = {};
 
@@ -469,7 +469,7 @@ app.get("/api/h2h-topscorer/:gameweek", async (req, res) => {
 });
 
 // ✅ API: Fetch User History & Manager Details
-app.get("/api/user-history/:teamId", async (req, res) => {
+app.get("/user-history/:teamId", async (req, res) => {
   const { teamId } = req.params;
 
   try {
@@ -571,7 +571,7 @@ app.get("/api/user-history/:teamId", async (req, res) => {
 });
 
 // ✅ Proxy for fetching player details from FPL API
-app.get("/api/player/:id", async (req, res) => {
+app.get("/player/:id", async (req, res) => {
   try {
     const playerId = req.params.id;
     const response = await axios.get(`https://fantasy.premierleague.com/api/element-summary/${playerId}/`);
