@@ -43,8 +43,7 @@ const HeadToHeadLeague = () => {
 
     return (
         <div className="p-4">
-           
-            <h2 className="text-2xl font-bold text-purple-950 mb-4">FPL NEPAL Head-to-Head League Standings</h2>
+            <h2 className="text-2xl font-bold text-purple-950 mb-4 text-center">FPL NEPAL Head-to-Head League Standings</h2>
 
             {loading ? (
                 <div className="text-center my-4">
@@ -52,7 +51,7 @@ const HeadToHeadLeague = () => {
                     <p className="text-gray-600 mt-2">Loading standings...</p>
                 </div>
             ) : (
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {HEAD_TO_HEAD_LEAGUES.map((league, index) => {
                         const standings = standingsByLeague[league] || [];
                         const currentPage = currentPages[league] || 1;
@@ -66,47 +65,53 @@ const HeadToHeadLeague = () => {
                             <div key={index} className="border p-3 rounded shadow-lg bg-white">
                                 <h3 className="text-lg font-semibold text-purple-950 mb-2">{league}</h3>
 
+                                {/* ✅ Responsive Table Wrapper (Enables Horizontal Scroll) */}
                                 <div className="overflow-x-auto">
-                                    <table className="w-full border-collapse border border-gray-300 text-xs">
+                                    <table className="w-full border-collapse border border-gray-300 text-xs md:text-sm">
                                         <thead className="bg-purple-950 text-white">
                                             <tr>
-                                                <th className="border p-2">Rank</th>
-                                                <th className="border p-2">Team</th>
-                                                <th className="border p-2">Manager</th>
-                                                <th className="border p-2">MP</th>
-                                                <th className="border p-2">W</th>
-                                                <th className="border p-2">D</th>
-                                                <th className="border p-2">L</th>
-                                                <th className="border p-2">Pts</th>
+                                                <th className="border p-2 md:p-3">Rank</th>
+                                                <th className="border p-2 md:p-3">Team</th>
+                                                <th className="border p-2 md:p-3">Manager</th>
+                                                <th className="border p-2 md:p-3">MP</th>
+                                                <th className="border p-2 md:p-3">W</th>
+                                                <th className="border p-2 md:p-3">D</th>
+                                                <th className="border p-2 md:p-3">L</th>
+                                                <th className="border p-2 md:p-3">Pts</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {currentStandings.map((team, index) => (
                                                 <tr key={index} className="border hover:bg-purple-100">
-                                                    <td className="border p-2 text-center">{team.rank}</td>
-                                                    <td className="border p-2">{team.team_name}</td>
-                                                    <td className="border p-2">{team.manager_name}</td>
-                                                    <td className="border p-2 text-center">{team.matches_played}</td>
-                                                    <td className="border p-2 text-center">{team.wins}</td>
-                                                    <td className="border p-2 text-center">{team.draws}</td>
-                                                    <td className="border p-2 text-center">{team.losses}</td>
-                                                    <td className="border p-2 text-center font-bold">{team.total_points}</td>
+                                                    <td className="border p-2 md:p-3 text-center">{team.rank}</td>
+                                                    <td className="border p-2 md:p-3">{team.team_name}</td>
+                                                    <td className="border p-2 md:p-3">{team.manager_name}</td>
+                                                    <td className="border p-2 md:p-3 text-center">{team.matches_played}</td>
+                                                    <td className="border p-2 md:p-3 text-center">{team.wins}</td>
+                                                    <td className="border p-2 md:p-3 text-center">{team.draws}</td>
+                                                    <td className="border p-2 md:p-3 text-center">{team.losses}</td>
+                                                    <td className="border p-2 md:p-3 text-center font-bold">{team.total_points}</td>
                                                 </tr>
                                             ))}
                                         </tbody>
                                     </table>
                                 </div>
 
+                                {/* ✅ Pagination (Responsive Buttons) */}
                                 <div className="flex justify-between items-center mt-2">
-                                    <button className={`px-2 py-1 border rounded ${currentPage === 1 ? "bg-gray-300 cursor-not-allowed" : "bg-blue-900 text-white"}`} 
+                                    <button className={`px-2 py-1 border rounded text-xs ${
+                                        currentPage === 1 ? "bg-gray-300 cursor-not-allowed" : "bg-blue-900 text-white"
+                                    }`} 
                                         onClick={() => handlePrevPage(league)} 
                                         disabled={currentPage === 1}>
                                         Prev
                                     </button>
-                                    <span className="text-sm font-semibold">
+                                    <span className="text-xs font-semibold">
                                         {currentPage} / {totalPages}
                                     </span>
-                                    <button className={`px-2 py-1 border rounded ${currentPage === totalPages ? "bg-gray-300 cursor-not-allowed" : "bg-blue-900 text-white"}`} 
+                                    <button className={`px-2 py-1 border rounded text-xs ${
+                                        currentPage === totalPages ? "bg-gray-300 cursor-not-allowed" : "bg-blue-900 text-white"
+                                    }`} 
                                         onClick={() => handleNextPage(league)} 
                                         disabled={currentPage === totalPages}>
                                         Next

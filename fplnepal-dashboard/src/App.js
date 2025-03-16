@@ -1,8 +1,8 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import usePageTracking from "./pages/usePageTracking"; //
-import Sidebar from "./components/Sidebar";  // Left sidebar
-import Navbar from "./components/Navbar";    // Top navbar
-import RightSidebar from "./components/RightSidebar"; // Global Right Sidebar
+import { useState } from "react";
+import usePageTracking from "./pages/usePageTracking";
+import Sidebar from "./components/Sidebar";
+import Navbar from "./components/Navbar";
 import Dashboard from "./pages/Dashboard";
 import Players from "./pages/Players";
 import Compare from "./pages/Compare";
@@ -17,19 +17,24 @@ import History from "./components/History";
 import Live from "./components/Live";
 
 
-
 const App = () => {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
+
   return (
     <Router>
       <PageTrackingWrapper />
-      <div className="flex">
-        <Sidebar /> {/* Left Sidebar */}
+      <div className="flex flex-col min-h-screen"> {/* ✅ Ensures Full Screen Height */}
+        <div className="flex flex-1 flex-col md:flex-row">
+          <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
+          
+          <div className="flex-1 flex flex-col">
+            <Navbar toggleSidebar={toggleSidebar} />
 
-        <div className="flex-1 flex flex-col">
-          <Navbar /> {/* Top Navbar */}
-
-          <div className="flex">
-            {/* Main Page Content */}
+            {/* ✅ Main Content Wrapper */}
             <div className="flex-1 p-6">
               <Routes>
                 <Route path="/" element={<Dashboard />} />
@@ -44,15 +49,14 @@ const App = () => {
                 <Route path="/history" element={<History />} />
                 <Route path="/live" element={<Live />} />
 
-
               </Routes>
             </div>
-            {/* Global Right Sidebar - Now It Appears on All Pages */}
-            
           </div>
         </div>
+
+        {/* ✅ Footer Always Stays at Bottom */}
+        <Footer />
       </div>
-      <Footer />
     </Router>
   );
 };
