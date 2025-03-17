@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import usePageTracking from "./pages/usePageTracking";
 import Sidebar from "./components/Sidebar";
 import Navbar from "./components/Navbar";
@@ -16,6 +16,7 @@ import H2HTopScorer from "./components/h2htopscorer";
 import History from "./components/History";
 import Live from "./components/Live";
 import PriceChangePrediction from "./components/PriceChangePrediction";
+import AdComponent from "./components/AdComponent"; // Import the new component
 
 const App = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -24,17 +25,28 @@ const App = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
+  // Ad Refresh on Route Change
+  const AdRefresh = () => {
+    useEffect(() => {
+      if (window.adsbygoogle) {
+        window.adsbygoogle.push({});
+      }
+    }, [window.location.pathname]); // Refresh ads on route change
+
+    return null;
+  };
+
   return (
     <Router>
       <PageTrackingWrapper />
-      <div className="flex flex-col min-h-screen"> {/* ✅ Ensures Full Screen Height */}
+      <div className="flex flex-col min-h-screen">
         <div className="flex flex-1 flex-col md:flex-row">
           <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
           
           <div className="flex-1 flex flex-col">
             <Navbar toggleSidebar={toggleSidebar} />
 
-            {/* ✅ Main Content Wrapper */}
+            {/* Main Content Wrapper */}
             <div className="flex-1 p-6">
               <Routes>
                 <Route path="/" element={<Dashboard />} />
@@ -49,20 +61,23 @@ const App = () => {
                 <Route path="/history" element={<History />} />
                 <Route path="/live" element={<Live />} />
                 <Route path="/price-change-prediction" element={<PriceChangePrediction />} />
-
               </Routes>
+              {/* Ad Component Placed Below Routes */}
+              <div className="mt-6">
+                <AdComponent />
+              </div>
             </div>
           </div>
         </div>
 
-        {/* ✅ Footer Always Stays at Bottom */}
+        {/* Footer Always Stays at Bottom */}
         <Footer />
       </div>
     </Router>
   );
 };
 
-// ✅ Wrapper Component to Ensure <Router> Exists Before usePageTracking()
+// Wrapper Component to Ensure <Router> Exists Before usePageTracking()
 const PageTrackingWrapper = () => {
   usePageTracking();
   return null;

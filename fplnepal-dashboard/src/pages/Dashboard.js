@@ -7,6 +7,7 @@ import DreamTeam from "../components/DreamTeam";
 import Suggestion from "../components/Suggestion";
 import Live from "../components/Live";
 import PriceChangePrediction from "../components/PriceChangePrediction";
+import AdComponent from "../components/AdComponent";
 
 const Dashboard = () => {
   return (
@@ -16,6 +17,11 @@ const Dashboard = () => {
         <TopStats />
         <TopSelectedPlayers />
         <InjuryNews />
+      </div>
+
+      {/* 🔹 Ad Unit Placement (e.g., above PriceChangePrediction) */}
+      <div className="mt-4">
+        <AdComponent />
       </div>
 
       {/* 🔹 Price Change Prediction Section */}
