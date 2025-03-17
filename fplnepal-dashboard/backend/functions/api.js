@@ -648,6 +648,94 @@ app.get("/live-fixtures", async (req, res) => {
   }
 });
 
+// ✅ Fetch Price Change Predictions
+app.get("/price-change-prediction", async (req, res) => {
+  try {
+    // Fetch player data from bootstrap-static
+    const bootstrapResponse = await axios.get(`${FPL_BASE_URL}/bootstrap-static/`, {
+      headers: { "User-Agent": "Mozilla/5.0" },
+    });
+
+    const players = bootstrapResponse.data.elements;
+    const teams = bootstrapResponse.data.teams;
+
+    // Map team IDs to team names for display
+    const teamMap = Object.fromEntries(teams.map(team => [team.id, team.name]));
+
+    // Predict price changes for each player
+    const predictedPlayers = players.map(player => {
+      const transfersIn = player.transfers_in_event || 0;
+      const transfersOut = player.transfers_out_event || 0;
+      const form = parseFloat(player.form) || 0;
+      const pointsPerGame = parseFloat(player.points_per_game) || 0;
+      const currentPrice = player.now_cost / 10; // Convert from 10x pence to pounds
+
+      // Simple prediction logic
+      let predictedChange = "No Change";
+
+      // Rising Price Prediction
+      if (
+        transfersIn > 10000 && // High transfers in
+        form > 5 && // Good form
+        pointsPerGame > 3 // Decent points per game
+      ) {
+        predictedChange = "Rise";
+      }
+      // Falling Price Prediction (Further relaxed criteria)
+      else if (
+        transfersOut > 2000 && // Lowered from 5000 to 2000
+        form < 4 && // Relaxed from < 3 to < 4
+        pointsPerGame < 3 // Relaxed from < 2 to < 3
+      ) {
+        predictedChange = "Fall";
+      }
+
+      // Debugging log for players not meeting criteria
+      if (predictedChange === "No Change") {
+        console.log(`Player ${player.web_name} (ID: ${player.id}) - Transfers In: ${transfersIn}, Transfers Out: ${transfersOut}, Form: ${form}, Points/Game: ${pointsPerGame}`);
+      }
+
+      return {
+        id: player.id,
+        web_name: player.web_name,
+        team: teamMap[player.team] || "Unknown Team",
+        current_price: currentPrice,
+        predicted_change: predictedChange,
+        transfers_in: transfersIn,
+        transfers_out: transfersOut,
+        form: form,
+        points_per_game: pointsPerGame,
+      };
+    });
+
+    // Filter players with predicted changes
+    const filteredPlayers = predictedPlayers.filter(
+      player => player.predicted_change !== "No Change"
+    );
+
+    // Sort by change magnitude
+    filteredPlayers.sort((a, b) => {
+      const scoreA = a.predicted_change === "Rise"
+        ? a.transfers_in + (a.form * 10)
+        : a.predicted_change === "Fall"
+        ? -(a.transfers_out + (5 - a.form) * 10)
+        : 0;
+      const scoreB = b.predicted_change === "Rise"
+        ? b.transfers_in + (b.form * 10)
+        : b.predicted_change === "Fall"
+        ? -(b.transfers_out + (5 - b.form) * 10)
+        : 0;
+      return scoreB - scoreA; // Descending order
+    });
+
+    res.json(filteredPlayers);
+  } catch (error) {
+    console.error("Error fetching price change predictions:", error.message);
+    res.status(500).json({ error: "Failed to fetch price change predictions" });
+  }
+});
+
+
 // ✅ Export the app as a Netlify Function handler instead of starting a server
 module.exports.handler = serverless(app, {
   basePath: "/api", // Strip "/api" from the path

@@ -207,4 +207,26 @@ export const fetchLiveMatchDetails = async (gameweek) => {
   }
 };
 
+// Fetch Price Change Predictions with optional query parameters
+export const fetchPriceChangePredictions = async (options = {}) => {
+  try {
+    const { type = "", page = 1, limit = 5 } = options; // Default to all, page 1, 5 items
+    const queryParams = new URLSearchParams({
+      type,
+      page: page.toString(),
+      limit: limit.toString(),
+    }).toString();
+    const url = `${BASE_URL}/price-change-prediction${queryParams ? `?${queryParams}` : ""}`;
+    const response = await fetch(url);
+
+    if (!response.ok) throw new Error(`Failed to fetch price change predictions: ${response.statusText}`);
+    const data = await response.json();
+
+    // If backend returns paginated data, adjust the return structure
+    return Array.isArray(data) ? data : data.players || [];
+  } catch (error) {
+    console.error("Error fetching price change predictions:", error);
+    return [];
+  }
+};
 
