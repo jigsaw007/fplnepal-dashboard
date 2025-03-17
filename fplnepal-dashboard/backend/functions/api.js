@@ -426,24 +426,38 @@ app.get("/h2h-topscorer/:gameweek", async (req, res) => {
           );
 
           const gameweekData = historyResponse.data.current.find((gw) => gw.event === parseInt(gameweek));
+          const points = gameweekData ? gameweekData.points : 0;
+          const transferCost = gameweekData ? gameweekData.event_transfers_cost : 0;
+          const adjustedPoints = points - transferCost; // Deduct transfer costs
+
 
           if (gameweekData) {
-            const points = gameweekData.points;
-
-            if (points > highestScore) {
-              highestScore = points;
+            const points = gameweekData.points || 0;
+            const transferCost = gameweekData.event_transfers_cost || 0;
+            const adjustedPoints = points - transferCost; // Deduct transfer cost
+          
+            if (adjustedPoints > highestScore) {
+              highestScore = adjustedPoints;
               topScorers = [
-                { manager_id: entry.entry, manager_name: entry.player_name, team_name: "", gameweek_score: points },
+                {
+                  manager_id: entry.entry,
+                  manager_name: entry.player_name,
+                  team_name: "",
+                  gameweek_score: adjustedPoints,
+                  transfer_cost: transferCost, // Store transfer cost
+                },
               ];
-            } else if (points === highestScore) {
+            } else if (adjustedPoints === highestScore) {
               topScorers.push({
                 manager_id: entry.entry,
                 manager_name: entry.player_name,
                 team_name: "",
-                gameweek_score: points,
+                gameweek_score: adjustedPoints,
+                transfer_cost: transferCost, // Store transfer cost
               });
             }
           }
+          
         } catch (error) {
           console.error(`Error fetching history for ${entry.entry}:`, error.message);
         }

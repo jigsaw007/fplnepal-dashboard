@@ -79,12 +79,17 @@ const H2HTopScorer = () => {
             <div key={leagueName} className="border p-3 rounded shadow-lg bg-white">
               <h3 className="text-lg font-semibold text-purple-950 mb-2">{leagueName}</h3>
               {topScorers[leagueName]?.length > 0 ? (
-                topScorers[leagueName].map((winner, index) => (
-                  <p key={index} className="text-sm cursor-pointer text-purple-950 hover:underline"
-                     onClick={() => openManagerSquad(winner.manager_id)}>
-                    <strong>Manager:</strong> {winner.manager_name} | <strong>GW Score:</strong> {winner.gameweek_score} | <strong>Team:</strong> {winner.team_name}
-                  </p>
-                ))
+topScorers[leagueName].map((winner, index) => (
+  <p key={index} className="text-sm cursor-pointer text-purple-950 hover:underline"
+     onClick={() => openManagerSquad(winner.manager_id)}>
+    <strong>Manager:</strong> {winner.manager_name} | 
+    <strong>GW Score:</strong> {winner.gameweek_score + winner.transfer_cost} | 
+    <span className="text-red-500">(-{winner.transfer_cost})</span> = 
+    <strong className="text-green-600"> {winner.gameweek_score}</strong> |  
+    <strong>Team:</strong> {winner.team_name}
+  </p>
+))
+
               ) : (
                 <p className="text-sm">No data available</p>
               )}
