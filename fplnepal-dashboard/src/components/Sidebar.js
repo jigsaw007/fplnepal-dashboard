@@ -16,6 +16,8 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         <Link to="/players" className="block hover:bg-gray-700 p-2 rounded">⚽ Players</Link>
         <Link to="/compare" className="block hover:bg-gray-700 p-2 rounded">⚽ Compare</Link>
         <Link to="/history" className="block hover:bg-gray-700 p-2 rounded">⚽ History</Link>
+        <Link to="/squad-compare" className="block hover:bg-gray-700 p-2 rounded">⚽ Squad Compare</Link>
+        <Link to="/versus" className="block hover:bg-gray-700 p-2 rounded">⚽ Versus</Link>
 
         <h3 className="text-lg font-semibold mt-4">FPL NEPAL</h3>
 
