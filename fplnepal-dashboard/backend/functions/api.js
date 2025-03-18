@@ -736,6 +736,79 @@ app.get("/price-change-prediction", async (req, res) => {
 });
 
 
+app.get("/versusHistory", async (req, res) => {
+  const { team_id1, team_id2, gameweek } = req.query;
+
+  if (!team_id1 || !team_id2 || !gameweek) {
+    return res.status(400).json({ error: "Missing team IDs or gameweek" });
+  }
+
+  try {
+    const [team1Response, team2Response] = await Promise.all([
+      axios.get(`${FPL_BASE_URL}/entry/${team_id1}/`),
+      axios.get(`${FPL_BASE_URL}/entry/${team_id2}/`),
+    ]);
+
+    const [team1SquadResponse, team2SquadResponse, playersResponse, liveScoresResponse, team1HistoryResponse, team2HistoryResponse] = await Promise.all([
+      axios.get(`${FPL_BASE_URL}/entry/${team_id1}/event/${gameweek}/picks/`),
+      axios.get(`${FPL_BASE_URL}/entry/${team_id2}/event/${gameweek}/picks/`),
+      axios.get(`${FPL_BASE_URL}/bootstrap-static/`), // Fetch all player data
+      axios.get(`${FPL_BASE_URL}/event/${gameweek}/live/`), // Fetch player points
+      axios.get(`${FPL_BASE_URL}/entry/${team_id1}/history/`), // Fetch chips used
+      axios.get(`${FPL_BASE_URL}/entry/${team_id2}/history/`), // Fetch chips used
+    ]);
+
+    const playersData = playersResponse.data.elements; // All player details
+    const liveScores = liveScoresResponse.data.elements; // Gameweek live points
+
+    const getChipsUsed = (historyData) => {
+      const chip = historyData.data.chips.find(chip => chip.event === parseInt(gameweek));
+      return chip ? chip.name : "None";
+    };
+
+    // Updated mapPlayerDetails to include element_type
+    const mapPlayerDetails = (picks) =>
+      picks.map((pick) => {
+        const player = playersData.find((p) => p.id === pick.element);
+        const livePlayer = liveScores.find((p) => p.id === pick.element);
+        return {
+          id: pick.element,
+          name: player ? player.web_name : "Unknown",
+          teamId: player ? player.team : 1, // Default to 1 if undefined
+          element_type: player ? player.element_type : 1, // Add element_type (1=GKP, 2=DEF, 3=MID, 4=FWD)
+          position: pick.position, // Squad position (1-15)
+          is_captain: pick.is_captain,
+          is_vice_captain: pick.is_vice_captain,
+          points: livePlayer ? livePlayer.stats.total_points : 0, // Correct points
+        };
+      });
+
+    const result = {
+      team1: {
+        manager_name: `${team1Response.data.player_first_name} ${team1Response.data.player_last_name}`,
+        team_name: team1Response.data.name,
+        gameweek_score: team1SquadResponse.data.entry_history.points || 0, // Use picks response for accurate GW score
+        chips_used: getChipsUsed(team1HistoryResponse),
+        squad: mapPlayerDetails(team1SquadResponse.data.picks),
+      },
+      team2: {
+        manager_name: `${team2Response.data.player_first_name} ${team2Response.data.player_last_name}`,
+        team_name: team2Response.data.name,
+        gameweek_score: team2SquadResponse.data.entry_history.points || 0, // Use picks response for accurate GW score
+        chips_used: getChipsUsed(team2HistoryResponse),
+        squad: mapPlayerDetails(team2SquadResponse.data.picks),
+      },
+    };
+
+    res.json(result);
+  } catch (error) {
+    console.error("Error fetching versus history:", error.message);
+    res.status(500).json({ error: "Failed to fetch versus history" });
+  }
+});
+
+
+
 // ✅ Export the app as a Netlify Function handler instead of starting a server
 module.exports.handler = serverless(app, {
   basePath: "/api", // Strip "/api" from the path

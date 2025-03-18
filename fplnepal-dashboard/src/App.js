@@ -16,7 +16,9 @@ import H2HTopScorer from "./components/h2htopscorer";
 import History from "./components/History";
 import Live from "./components/Live";
 import PriceChangePrediction from "./components/PriceChangePrediction";
-import AdComponent from "./components/AdComponent"; // Import the new component
+import AdComponent from "./components/AdComponent"; 
+import SquadCompare from "./components/SquadCompare";
+import Versus from "./components/Versus";
 
 const App = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -61,6 +63,8 @@ const App = () => {
                 <Route path="/history" element={<History />} />
                 <Route path="/live" element={<Live />} />
                 <Route path="/price-change-prediction" element={<PriceChangePrediction />} />
+                <Route path="/squad-compare" element={<SquadCompare />} />
+                <Route path="/versus" element={<Versus />} />
               </Routes>
               {/* Ad Component Placed Below Routes */}
               <div className="mt-6">

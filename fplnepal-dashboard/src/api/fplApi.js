@@ -230,3 +230,16 @@ export const fetchPriceChangePredictions = async (options = {}) => {
   }
 };
 
+//versus
+export const fetchVersusHistory = async (teamId1, teamId2, gameweek) => {
+  try {
+    const response = await fetch(
+      `${BASE_URL}/versusHistory?team_id1=${teamId1}&team_id2=${teamId2}&gameweek=${gameweek}`
+    );
+    if (!response.ok) throw new Error("Failed to fetch versus history");
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching versus history:", error);
+    return null;
+  }
+};
