@@ -487,6 +487,7 @@ app.get("/h2h-topscorer/:gameweek", async (req, res) => {
 });
 
 // ✅ API: Fetch User History & Manager Details
+// ✅ API: Fetch User History & Manager Details
 app.get("/user-history/:teamId", async (req, res) => {
   const { teamId } = req.params;
 
@@ -565,6 +566,10 @@ app.get("/user-history/:teamId", async (req, res) => {
     const favoritePlayer = favoritePlayerId ? playerMap[favoritePlayerId] || "Unknown Player" : "N/A";
     const favoriteCaptain = favoriteCaptainId ? playerMap[favoriteCaptainId] || "Unknown Player" : "N/A";
 
+    // ✅ Get pick counts for favorite player and captain
+    const favoritePlayerPicks = favoritePlayerId ? playerCounts[favoritePlayerId] || 0 : 0;
+    const favoriteCaptainPicks = favoriteCaptainId ? captainCounts[favoriteCaptainId] || 0 : 0;
+
     // ✅ Final Data Formatting
     const formattedData = {
       name: `${managerData.player_first_name} ${managerData.player_last_name}`,
@@ -576,6 +581,8 @@ app.get("/user-history/:teamId", async (req, res) => {
       chips: historyData.chips || [],
       favorite_player: favoritePlayer,
       favorite_captain: favoriteCaptain,
+      favorite_player_picks: favoritePlayerPicks, // Add pick count for favorite player
+      favorite_captain_picks: favoriteCaptainPicks, // Add pick count for favorite captain
       best_gameweek: bestGameweek,
       worst_gameweek: worstGameweek,
       total_bench_points: totalBenchPoints, // ✅ Added Total Bench Points

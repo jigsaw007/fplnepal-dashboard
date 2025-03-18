@@ -1,11 +1,17 @@
 import React, { useState } from "react";
-import { fetchUserHistory } from "../api/fplApi";
+import { fetchUserHistory, fetchPlayerDetails } from "../api/fplApi";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+
+// Define BASE_URL consistently with your API file
+const BASE_URL = process.env.NODE_ENV === "development"
+  ? "http://localhost:8888/.netlify/functions/api"
+  : "https://webapp.fplnepal.com/.netlify/functions/api";
 
 const SquadCompare = () => {
   const [teamId1, setTeamId1] = useState("");
   const [teamId2, setTeamId2] = useState("");
   const [comparisonData, setComparisonData] = useState(null);
+  const [playerStats, setPlayerStats] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -17,17 +23,25 @@ const SquadCompare = () => {
 
     setLoading(true);
     setError(null);
+    setComparisonData(null);
+    setPlayerStats(null);
 
     try {
+      // Fetch team data for both team IDs
       const [team1Data, team2Data] = await Promise.all([
         fetchUserHistory(teamId1),
-        fetchUserHistory(teamId2),
+        fetchUserHistory(teamId2), // Fixed: Use teamId2 instead of teamId1
       ]);
+
+      if (!team1Data || !team2Data) {
+        throw new Error("Failed to fetch team data.");
+      }
 
       setComparisonData({
         team1: team1Data,
         team2: team2Data,
       });
+      setPlayerStats(null); // No need for playerStats since we're using pick counts from comparisonData
     } catch (error) {
       setError("Failed to fetch data. Please check the team IDs.");
       console.error(error);
@@ -36,11 +50,26 @@ const SquadCompare = () => {
     }
   };
 
+  // Function to analyze chip usage effectiveness
+  const analyzeChipUsage = (teamData) => {
+    const chipEvents = teamData.chips.map(chip => chip.event);
+    const chipScores = teamData.current
+      .filter(gw => chipEvents.includes(gw.event))
+      .map(gw => ({ event: gw.event, points: gw.points, chip: teamData.chips.find(c => c.event === gw.event)?.name }));
+    const nonChipScores = teamData.current.filter(gw => !chipEvents.includes(gw.event)).map(gw => gw.points);
+    const avgNonChipScore = nonChipScores.length ? (nonChipScores.reduce((a, b) => a + b, 0) / nonChipScores.length) : 0;
+
+    return {
+      chipDetails: chipScores,
+      avgNonChipScore: avgNonChipScore.toFixed(2),
+    };
+  };
+
   return (
     <div className="p-6 bg-gray-100 rounded-lg shadow-md">
       <h2 className="text-3xl font-semibold text-center mb-6">Squad Comparison</h2>
 
-      <div className="flex gap-4 mb-6">
+      <div className="flex flex-col sm:flex-row gap-4 mb-6">
         <input
           type="number"
           placeholder="Enter Team ID 1"
@@ -77,7 +106,8 @@ const SquadCompare = () => {
         <div className="mt-6 bg-white p-6 rounded-lg shadow-lg">
           <h3 className="text-xl font-semibold text-center mb-4">Comparison Results</h3>
 
-          <div className="grid grid-cols-2 gap-6">
+          {/* Team Overview */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div className="p-4 border rounded-lg shadow bg-gray-50">
               <h4 className="text-lg font-semibold text-blue-700">{comparisonData.team1.team_name}</h4>
               <p><strong>Manager:</strong> {comparisonData.team1.name}</p>
@@ -96,6 +126,74 @@ const SquadCompare = () => {
               <p><strong>Total Bench Points:</strong> {comparisonData.team2.total_bench_points}</p>
               <p><strong>Total Transfers:</strong> {comparisonData.team2.current.reduce((acc, gw) => acc + gw.event_transfers, 0)}</p>
               <p><strong>Chips Used:</strong> {comparisonData.team2.chips.map(chip => chip.name).join(", ") || "None"}</p>
+            </div>
+          </div>
+
+          {/* Player Performance Comparison */}
+          {comparisonData && (
+            <div className="mt-6">
+              <h4 className="text-lg font-semibold text-center mb-4">Player Performance Comparison</h4>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div className="p-4 border rounded-lg shadow bg-gray-50">
+                  <h5 className="text-md font-semibold text-blue-700">{comparisonData.team1.team_name}</h5>
+                  <div className="mt-2">
+                    <p className="text-sm font-semibold">Favorite Player: {comparisonData.team1.favorite_player}</p>
+                    <p className="text-sm">Times Picked: {comparisonData.team1.favorite_player_picks || 0}</p>
+                  </div>
+                  <div className="mt-2">
+                    <p className="text-sm font-semibold">Favorite Captain: {comparisonData.team1.favorite_captain}</p>
+                    <p className="text-sm">Times Picked as Captain: {comparisonData.team1.favorite_captain_picks || 0}</p>
+                  </div>
+                </div>
+                <div className="p-4 border rounded-lg shadow bg-gray-50">
+                  <h5 className="text-md font-semibold text-blue-700">{comparisonData.team2.team_name}</h5>
+                  <div className="mt-2">
+                    <p className="text-sm font-semibold">Favorite Player: {comparisonData.team2.favorite_player}</p>
+                    <p className="text-sm">Times Picked: {comparisonData.team2.favorite_player_picks || 0}</p>
+                  </div>
+                  <div className="mt-2">
+                    <p className="text-sm font-semibold">Favorite Captain: {comparisonData.team2.favorite_captain}</p>
+                    <p className="text-sm">Times Picked as Captain: {comparisonData.team2.favorite_captain_picks || 0}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Chip Usage Analysis Section */}
+          <div className="mt-6">
+            <h4 className="text-lg font-semibold text-center mb-4">Chip Usage Effectiveness</h4>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div className="p-4 border rounded-lg shadow bg-gray-50">
+                <h5 className="text-md font-semibold text-blue-700">{comparisonData.team1.team_name}</h5>
+                {analyzeChipUsage(comparisonData.team1).chipDetails.length > 0 ? (
+                  analyzeChipUsage(comparisonData.team1).chipDetails.map((chip, index) => (
+                    <p key={index} className="text-sm">
+                      <strong>{chip.chip} (GW {chip.event}):</strong> {chip.points} pts
+                    </p>
+                  ))
+                ) : (
+                  <p className="text-sm">No chips used.</p>
+                )}
+                <p className="text-sm mt-2">
+                  <strong>Avg Score (No Chips):</strong> {analyzeChipUsage(comparisonData.team1).avgNonChipScore} pts
+                </p>
+              </div>
+              <div className="p-4 border rounded-lg shadow bg-gray-50">
+                <h5 className="text-md font-semibold text-blue-700">{comparisonData.team2.team_name}</h5>
+                {analyzeChipUsage(comparisonData.team2).chipDetails.length > 0 ? (
+                  analyzeChipUsage(comparisonData.team2).chipDetails.map((chip, index) => (
+                    <p key={index} className="text-sm">
+                      <strong>{chip.chip} (GW {chip.event}):</strong> {chip.points} pts
+                    </p>
+                  ))
+                ) : (
+                  <p className="text-sm">No chips used.</p>
+                )}
+                <p className="text-sm mt-2">
+                  <strong>Avg Score (No Chips):</strong> {analyzeChipUsage(comparisonData.team2).avgNonChipScore} pts
+                </p>
+              </div>
             </div>
           </div>
 
