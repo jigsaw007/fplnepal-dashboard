@@ -65,6 +65,7 @@ const App = () => {
                 <Route path="/price-change-prediction" element={<PriceChangePrediction />} />
                 <Route path="/squad-compare" element={<SquadCompare />} />
                 <Route path="/versus" element={<Versus />} />
+
               </Routes>
               {/* Ad Component Placed Below Routes */}
               <div className="mt-6">

@@ -302,44 +302,46 @@ app.get("/tieanalyze", async (req, res) => {
         // 🔹 Map players to their real-world team & assign goals conceded
         const teamPlayersConceded = {};
 
-        picks.forEach((pick) => {
-          const player = playerInfoMap[pick.element];
-          const livePlayer = liveData[pick.element - 1].stats;
-          const playerTeamId = player.team;
-          const playerPosition = player.element_type; // Position (1=GKP, 2=DEF, 3=MID, 4=FWD)
-          const minutesPlayed = livePlayer.minutes || 0;
+// ✅ Only process starting 11 players
+picks
+  .filter((pick) => pick.position <= 11) // Only include starting 11
+  .forEach((pick) => {
+    const player = playerInfoMap[pick.element];
+    const livePlayer = liveData[pick.element - 1].stats;
+    const playerTeamId = player.team;
+    const playerPosition = player.element_type;
+    const minutesPlayed = livePlayer.minutes || 0;
 
-          if (minutesPlayed > 0) {
-            // ✅ Player played, apply correct stats
-            if (livePlayer.goals_scored > 0) {
-              goalsScored += livePlayer.goals_scored;
-              playersScored.push({
-                id: pick.element,
-                name: player.web_name,
-                team: playerTeamId,
-                position: playerPosition,
-                goals: livePlayer.goals_scored,
-              });
-            }
-
-            // ✅ Apply team’s conceded goals to ALL players (GKP, DEF, MID, FWD)
-            const concededByTeam = teamConcededGoals[playerTeamId] || 0;
-            if (concededByTeam > 0) {
-              // ✅ Don't include if conceded is 0
-              goalsConceded += concededByTeam;
-              if (!teamPlayersConceded[playerTeamId]) {
-                teamPlayersConceded[playerTeamId] = [];
-              }
-              teamPlayersConceded[playerTeamId].push({
-                id: pick.element,
-                name: player.web_name,
-                team: playerTeamId,
-                position: playerPosition,
-                conceded: concededByTeam,
-              });
-            }
-          }
+    if (minutesPlayed > 0) {
+      // ✅ Count goals scored
+      if (livePlayer.goals_scored > 0) {
+        goalsScored += livePlayer.goals_scored;
+        playersScored.push({
+          id: pick.element,
+          name: player.web_name,
+          team: playerTeamId,
+          position: playerPosition,
+          goals: livePlayer.goals_scored,
         });
+      }
+
+      // ✅ Count goals conceded by player's real team
+      const concededByTeam = teamConcededGoals[playerTeamId] || 0;
+      if (concededByTeam > 0) {
+        goalsConceded += concededByTeam;
+        if (!teamPlayersConceded[playerTeamId]) {
+          teamPlayersConceded[playerTeamId] = [];
+        }
+        teamPlayersConceded[playerTeamId].push({
+          id: pick.element,
+          name: player.web_name,
+          team: playerTeamId,
+          position: playerPosition,
+          conceded: concededByTeam,
+        });
+      }
+    }
+  });
 
         // 🔹 Assign all playing players from this team to the conceded list
         Object.values(teamPlayersConceded).forEach((players) => {
@@ -813,6 +815,8 @@ app.get("/versusHistory", async (req, res) => {
     res.status(500).json({ error: "Failed to fetch versus history" });
   }
 });
+
+
 
 
 
